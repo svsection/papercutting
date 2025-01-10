@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+}
+
+h1, h2 {
+    color: #007BFF;
+    text-align: center;
+}
+
+#latest-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.post {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.post h3 a {
+    text-decoration: none;
+    color: #333;
+}
+
+.post h3 a:hover {
+    color: #007BFF;
+}
+
+footer {
+    margin-top: 20px;
+    text-align: center;
+}
