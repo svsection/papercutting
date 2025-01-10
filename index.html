@@ -11,8 +11,35 @@
     <p>Your gateway to amazing travel stories!</p>
 
     <h2>Latest Posts</h2>
-    <div id="latest-posts"></div> <!-- Container for latest posts -->
+    <div id="latest-posts"></div> <!-- Container for blog posts -->
 
-    <script src="script.js"></script>
+    <script src="posts.json"></script>
+    <script>
+        // Fetch and display the latest blog posts
+        fetch('posts.json')
+            .then(response => response.json())
+            .then(posts => {
+                const postsContainer = document.getElementById('latest-posts');
+
+                // Sort posts by date (latest first)
+                posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                // Show the latest 3 posts
+                const latestPosts = posts.slice(0, 3);
+                latestPosts.forEach(post => {
+                    const postCard = document.createElement('div');
+                    postCard.classList.add('post');
+
+                    postCard.innerHTML = `
+                        <h3><a href="post.html?id=${post.id}">${post.title}</a></h3>
+                        <p>${post.date}</p>
+                        <p>${post.description}</p>
+                    `;
+
+                    postsContainer.appendChild(postCard);
+                });
+            })
+            .catch(error => console.error('Error loading posts:', error));
+    </script>
 </body>
 </html>
