@@ -1,63 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>PDF Finder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    input { padding: 8px; width: 200px; }
-    button { padding: 8px; margin-left: 5px; }
-    #result { margin-top: 20px; }
-    a { display: block; margin-top: 10px; }
+    body { font-family: Arial, sans-serif; padding: 24px; max-width: 720px; margin: 0 auto; }
+    h1 { margin-bottom: 12px; }
+    .row { display: flex; gap: 8px; align-items: center; }
+    input { padding: 10px; font-size: 16px; width: 260px; }
+    button { padding: 10px 14px; font-size: 16px; cursor: pointer; }
+    #status { margin-top: 8px; font-size: 14px; color: #555; }
+    #result { margin-top: 18px; }
+    .link { display: block; margin: 8px 0; }
+    .error { color: #b00020; }
+    .muted { color: #666; font-size: 14px; }
   </style>
 </head>
 <body>
   <h1>Search PDF by 8-digit Number</h1>
-  <input type="text" id="searchBox" placeholder="Enter 8-digit number">
-  <button onclick="searchPDF()">Search</button>
+  <div class="row">
+    <input id="searchBox" type="text" inputmode="numeric" maxlength="8" placeholder="Enter 8-digit number" />
+    <button id="searchBtn">Search</button>
+  </div>
+  <div id="status" class="muted">Loading index…</div>
   <div id="result"></div>
 
   <script>
-    let indexData = {};
+    // Reverse index: "12345678" -> Set([ "Paper Cutting S-01-2025.pdf", ... ])
+    const reverseIndex = new Map();
+    let indexReady = false;
 
-    // Load the index.json (Format 2: { "filename.pdf": ["12345678", "87654321"] })
-    fetch("index.json")
-      .then(res => res.json())
-      .then(data => { indexData = data; });
+    // Helper: make sure values from JSON become 8-char digit strings
+    function toEightDigitString(n) {
+      if (n === null || n === undefined) return null;
+      let s = String(n).trim();         // handle numbers or strings
+      s = s.replace(/\D/g, "");         // keep digits only
+      if (s.length === 0) return null;
+      if (s.length > 8) return null;    // ignore anything that's not exactly 8 digits
+      if (s.length < 8) s = s.padStart(8, "0");
+      return /^\d{8}$/.test(s) ? s : null;
+    }
 
-    function searchPDF() {
-      const query = document.getElementById("searchBox").value.trim();
+    function buildReverseIndex(indexData) {
+      for (const [file, nums] of Object.entries(indexData)) {
+        if (!Array.isArray(nums)) continue;
+        for (const n of nums) {
+          const key = toEightDigitString(n);
+          if (!key) continue;
+          if (!reverseIndex.has(key)) reverseIndex.set(key, new Set());
+          reverseIndex.get(key).add(file);
+        }
+      }
+    }
+
+    async function loadIndex() {
+      const status = document.getElementById("status");
+      try {
+        const res = await fetch("index.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        buildReverseIndex(data);
+        indexReady = true;
+        status.textContent = "Index loaded. You can search now.";
+      } catch (e) {
+        indexReady = false;
+        status.innerHTML = `<span class="error">Couldn't load index.json (${e.message}).</span>`;
+      }
+    }
+
+    function search() {
       const resultDiv = document.getElementById("result");
+      const status = document.getElementById("status");
+      const query = document.getElementById("searchBox").value.trim();
+
       resultDiv.innerHTML = "";
 
-      if (query.length !== 8 || isNaN(query)) {
-        resultDiv.innerHTML = "<p style='color:red;'>Please enter a valid 8-digit number.</p>";
+      if (!indexReady) {
+        status.innerHTML = `<span class="error">Index not ready yet. Please wait a moment.</span>`;
         return;
       }
 
-      let matches = [];
-
-      // Loop through PDFs and check if number exists in their arrays
-      for (const [file, numbers] of Object.entries(indexData)) {
-        if (numbers.includes(query)) {
-          matches.push(file);
-        }
+      if (!/^\d{8}$/.test(query)) {
+        resultDiv.innerHTML = `<p class="error">Please enter a valid 8-digit number.</p>`;
+        return;
       }
 
-      if (matches.length > 0) {
-        resultDiv.innerHTML = "<p>Found in the following PDF(s):</p>";
-        matches.forEach(pdf => {
-          const link = document.createElement("a");
-          link.href = "pdfs/" + pdf;
-          link.target = "_blank";
-          link.download = pdf;
-          link.textContent = pdf;   // 👈 Show actual file name
-          resultDiv.appendChild(link);
-        });
+      const filesSet = reverseIndex.get(query);
+      if (filesSet && filesSet.size > 0) {
+        const files = Array.from(filesSet).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+        const header = document.createElement("p");
+        header.textContent = `Found in ${files.length} PDF${files.length > 1 ? "s" : ""}:`;
+        resultDiv.appendChild(header);
+
+        for (const pdf of files) {
+          const a = document.createElement("a");
+          a.className = "link";
+          a.href = "pdfs/" + encodeURIComponent(pdf); // handle spaces & special chars
+          a.target = "_blank";
+          a.download = pdf;
+          a.textContent = pdf; // show actual filename
+          resultDiv.appendChild(a);
+        }
       } else {
-        resultDiv.innerHTML = "<p style='color:red;'>No PDF found for this number.</p>";
+        resultDiv.innerHTML = `<p class="error">No PDF found for this number.</p>`;
       }
     }
+
+    // Wire up UI
+    document.getElementById("searchBtn").addEventListener("click", search);
+    document.getElementById("searchBox").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") search();
+    });
+
+    // Start
+    loadIndex();
   </script>
 </body>
 </html>
