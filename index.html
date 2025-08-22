@@ -1,45 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Travel Blog</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>PDF Finder</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input { padding: 8px; width: 200px; }
+    button { padding: 8px; margin-left: 5px; }
+    #result { margin-top: 20px; }
+    a { display: block; margin-top: 10px; }
+  </style>
 </head>
 <body>
-    <h1>Welcome to My Travel Blog</h1>
-    <p>Your gateway to amazing travel stories!</p>
+  <h1>Search PDF by 8-digit Number</h1>
+  <input type="text" id="searchBox" placeholder="Enter 8-digit number">
+  <button onclick="searchPDF()">Search</button>
+  <div id="result"></div>
 
-    <h2>Latest Posts</h2>
-    <div id="latest-posts"></div> <!-- Container for blog posts -->
+  <script>
+    let indexData = {};
 
-    <script src="posts.json"></script>
-    <script>
-        // Fetch and display the latest blog posts
-        fetch('posts.json')
-            .then(response => response.json())
-            .then(posts => {
-                const postsContainer = document.getElementById('latest-posts');
+    // Load the index.json
+    fetch("index.json")
+      .then(res => res.json())
+      .then(data => { indexData = data; });
 
-                // Sort posts by date (latest first)
-                posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    function searchPDF() {
+      const query = document.getElementById("searchBox").value.trim();
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "";
 
-                // Show the latest 3 posts
-                const latestPosts = posts.slice(0, 3);
-                latestPosts.forEach(post => {
-                    const postCard = document.createElement('div');
-                    postCard.classList.add('post');
-
-                    postCard.innerHTML = `
-                        <h3><a href="post.html?id=${post.id}">${post.title}</a></h3>
-                        <p>${post.date}</p>
-                        <p>${post.description}</p>
-                    `;
-
-                    postsContainer.appendChild(postCard);
-                });
-            })
-            .catch(error => console.error('Error loading posts:', error));
-    </script>
+      if (indexData[query]) {
+        const pdfFile = "pdfs/" + indexData[query];
+        resultDiv.innerHTML = `<p>Found: <a href="${pdfFile}" target="_blank" download>Download PDF</a></p>`;
+      } else {
+        resultDiv.innerHTML = "<p style='color:red;'>No PDF found for this number.</p>";
+      }
+    }
+  </script>
 </body>
 </html>
