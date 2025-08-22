@@ -18,7 +18,7 @@
   </style>
 </head>
 <body>
-  <h1>Search PDF by 8-digit Number</h1>
+  <h1>Search Paper Cutting by 8-digit Tender Number</h1>
   <div class="row">
     <input id="searchBox" type="text" inputmode="numeric" maxlength="8" placeholder="Enter 8-digit number" />
     <button id="searchBtn">Search</button>
@@ -62,7 +62,7 @@
         const data = await res.json();
         buildReverseIndex(data);
         indexReady = true;
-        status.textContent = "Index loaded. You can search now.";
+        status.textContent = "Welcome, Have a good day...";
       } catch (e) {
         indexReady = false;
         status.innerHTML = `<span class="error">Couldn't load index.json (${e.message}).</span>`;
@@ -103,7 +103,7 @@
           resultDiv.appendChild(a);
         }
       } else {
-        resultDiv.innerHTML = `<p class="error">No PDF found for this number.</p>`;
+        resultDiv.innerHTML = `<p class="error">Paper Cutting Yet to be received in SV Section</p>`;
       }
     }
 
@@ -118,3 +118,4 @@
   </script>
 </body>
 </html>
+
