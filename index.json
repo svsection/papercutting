@@ -1,7 +1,5 @@
 {
-  "12345678": "Paper Cutting S-01-2025.pdf",
-  "87654321": "Paper Cutting S-02-2025.pdf",
-  "56781234": "Paper Cutting S-03-2025.pdf"
+  "Paper Cutting S-01-2025.pdf": ["12345678", "87654321"],
+  "Paper Cutting S-02-2025.pdf": ["56781234"],
+  "Paper Cutting S-03-2025.pdf": ["43218765", "11112222"]
 }
-
-
