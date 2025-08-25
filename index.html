@@ -6,20 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     
-    body { font-family: Arial, sans-serif; padding: 24px; max-width: 720px; margin: 0 auto; }
+    body {background:linear-gradient(180deg, #ffeef1, #ffc6d0, #fdcffd); width:100%; min-height:100vh; padding:0px; margin: 0px; text-align:center;}
+    html {width:100%; min-height:100vh;}
     h1 { margin-bottom: 12px; }
-    .row { display: flex; gap: 8px; align-items: center; }
+    .row { display: flex; gap: 8px; justify-content: center; }
     input { padding: 10px; font-size: 16px; width: 260px; }
-    button { padding: 10px 14px; font-size: 16px; cursor: pointer; }
+    button { padding: 10px 14px; font-size: 16px; cursor: pointer; background: #03A9F4; color: #fff;  font-weight: 800;}
     #status { margin-top: 8px; font-size: 14px; color: #555; }
     #result { margin-top: 18px; }
     .link { display: block; margin: 8px 0; }
     .error { color: #b00020; }
     .muted { color: #666; font-size: 14px; }
-    .marquee {width: 100%; overflow: hidden; white-space: nowrap; box-sizing: border-box; animation: scroll 10s linear infinite;}
-    @keyframes scroll {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+   marquee {background:#d46ee5; color:#fff; padding:4px; font-weight:800; font-size:26px;}
       
   </style>
 </head>
@@ -27,9 +25,7 @@
 
 
 
-<div class="marquee">
-  You Can Download Paper Cutting till Tender Notice No. S-55-2025.
-</div>
+<marquee>You Can Download Paper Cutting till Tender Notice No. S-55-2025.</marquee>
 
   
   <h1>Download Paper Cutting by 8-digit Tender Number</h1>
@@ -142,5 +138,6 @@
   </script>
 </body>
 </html>
+
 
 
