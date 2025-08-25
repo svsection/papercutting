@@ -5,6 +5,7 @@
   <title>PDF Finder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    
     body { font-family: Arial, sans-serif; padding: 24px; max-width: 720px; margin: 0 auto; }
     h1 { margin-bottom: 12px; }
     .row { display: flex; gap: 8px; align-items: center; }
@@ -15,10 +16,23 @@
     .link { display: block; margin: 8px 0; }
     .error { color: #b00020; }
     .muted { color: #666; font-size: 14px; }
+    .marquee {width: 100%; overflow: hidden; white-space: nowrap; box-sizing: border-box; animation: scroll 10s linear infinite;}
+    @keyframes scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+      
   </style>
 </head>
 <body>
-  <h1>Search Paper Cutting by 8-digit Tender Number</h1>
+
+
+
+<div class="marquee">
+  You Can Download Paper Cutting till Tender Notice No. S-55-2025.
+</div>
+
+  
+  <h1>Download Paper Cutting by 8-digit Tender Number</h1>
   <div class="row">
     <input id="searchBox" type="text" inputmode="numeric" maxlength="8" placeholder="Enter 8-digit number" />
     <button id="searchBtn">Search</button>
@@ -26,6 +40,16 @@
   <div id="status" class="muted">Loading index…</div>
   <div id="result"></div>
 
+
+
+
+
+
+
+
+
+
+  
   <script>
     // Reverse index: "12345678" -> Set([ "Paper Cutting S-01-2025.pdf", ... ])
     const reverseIndex = new Map();
@@ -118,4 +142,5 @@
   </script>
 </body>
 </html>
+
 
